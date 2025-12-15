@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Something Random</title>
+  <meta name="description" content="Enter a random word and number to get a fun future prediction with quotes and vibes." />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #222, #444);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .card {
+      background: rgba(0,0,0,0.6);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      animation: fadeIn 1s ease;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    p {
+      text-align: center;
+      opacity: 0.9;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+    input {
+      background: #eee;
+    }
+    button {
+      background: #ff7a18;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.03);
+      background: #ff9a3c;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      animation: float 3s ease-in-out infinite;
+      display: none;
+    }
+    .disclaimer {
+      margin-top: 15px;
+      font-size: 0.75rem;
+      opacity: 0.7;
+      text-align: center;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+      .sparkle { position: absolute; width: 6px; height: 6px; border-radius: 50%; opacity: 0.8; animation: sparkle 2s infinite ease-in-out; }
+    @keyframes sparkle {
+      0% { transform: scale(0) translateY(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scale(1.5) translateY(-40px); opacity: 0; }
+    }
+    .character {
+      font-size: 60px;
+      text-align: center;
+      margin-top: 15px;
+      animation: bounce 2s infinite;
+      display: none;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Something Random</h1>
+    <p>Enter a random word and number.<br>We’ll reveal a fun future vibe ✨</p>
+
+    <input type="text" id="word" placeholder="Random word" />
+    <input type="number" id="number" placeholder="Random number" />
+    <button onclick="generateResult()">Reveal My Future</button>
+
+    <div class="character" id="character"></div>
+
+    <div class="result" id="result"></div>
+
+    <div class="disclaimer">
+      For entertainment purposes only. Not a prediction or advice.
+    </div>
+  </div>
+
+  <script>
+    // Simple vibration sound using Web Audio API (copyright-free)
+    function playTone(freq) {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.6);
+    }
+
+    const heroes = [
+      { name: 'Arin the Wanderer', icon: '🗺️', message: 'Every step forward matters, even when the path feels unclear.' },
+      { name: 'Lyra of the Dawn', icon: '🌅', message: 'Light always returns to those who keep moving.' },
+      { name: 'The Quiet Monk', icon: '📿', message: 'Stillness is not weakness; it is preparation.' },
+      { name: 'Kael the Brave', icon: '🛡️', message: 'Courage grows when you act despite fear.' },
+      { name: 'The Old Storyteller', icon: '📖', message: 'Every chapter, good or bad, shapes who you become.' }
+    ];
+
+    const outcomes = [
+      {
+        mood: 'bright',
+        color: 'linear-gradient(135deg, #56ab2f, #a8e063)',
+        quote: 'Growth is happening even if you can’t see it yet.',
+        long: 'In the coming phase of your life, small positive actions connected to your word will quietly compound into something meaningful. Opportunities may appear in ordinary moments, so stay alert and open. This is a time where confidence grows naturally if you trust your instincts and stay consistent.',
+        fact: 'Studies show optimistic thinking improves resilience and long-term success.'
+      },
+      {
+        mood: 'calm',
+        color: 'linear-gradient(135deg, #2193b0, #6dd5ed)',
+        quote: 'Patience now creates clarity later.',
+        long: 'Your future energy suggests a slowing down that works in your favor. By giving yourself space to think and breathe, you’ll notice answers forming without force. This period rewards emotional balance, thoughtful choices, and quiet preparation for something important ahead.',
+        fact: 'Calm decision-making activates areas of the brain linked to clarity and focus.'
+      },
+      {
+        mood: 'bold',
+        color: 'linear-gradient(135deg, #f12711, #f5af19)',
+        quote: 'A risk taken soon will change your direction.',
+        long: 'Momentum is building around you, and hesitation may be the only real obstacle. A decisive move—especially one related to your chosen word—can open a new path. Even if the outcome isn’t perfect, the experience itself will reshape your confidence and future choices.',
+        fact: 'Most high achievers credit bold action, not certainty, for their success.'
+      },
+      {
+        mood: 'mystic',
+        color: 'linear-gradient(135deg, #41295a, #2F0743)',
+        quote: 'Not everything needs to be understood to be trusted.',
+        long: 'Your future carries a sense of mystery and intuition. Signs may appear indirectly—through feelings, dreams, or coincidences. Instead of seeking logic, listen to subtle signals. This phase favors inner wisdom, reflection, and trusting what feels right over what looks right.',
+        fact: 'The human brain naturally searches for meaning, even in randomness.'
+      }
+    ];
+
+    function generateResult() {
+      const word = document.getElementById('word').value.trim();
+      const number = parseInt(document.getElementById('number').value);
+      if (!word || isNaN(number)) {
+        alert('Please enter both a word and a number.');
+        return;
+      }
+      // Fully random result every time (no repetition logic)
+      const index = Math.floor(Math.random() * outcomes.length);
+      const chosen = outcomes[index];
+
+      document.body.style.background = chosen.color;
+
+      const charDiv = document.getElementById('character');
+      charDiv.style.display = 'block';
+
+      // Pick a random motivational character (fictional, copyright-safe)
+      const hero = heroes[Math.floor(Math.random() * heroes.length)];
+      charDiv.innerHTML = `<div>${hero.icon}</div><div style="font-size:14px;opacity:0.85;">${hero.name}</div>`;
+
+      if (chosen.mood === 'bright') charDiv.textContent = '🌱';
+      if (chosen.mood === 'calm') charDiv.textContent = '🧘';
+      if (chosen.mood === 'bold') charDiv.textContent = '🔥';
+      if (chosen.mood === 'mystic') charDiv.textContent = '🔮';
+
+      // Play vibe-based sound (no copyright)
+      if (chosen.mood === 'bright') playTone(520);
+      if (chosen.mood === 'calm') playTone(260);
+      if (chosen.mood === 'bold') playTone(740);
+      if (chosen.mood === 'mystic') playTone(180);
+
+      // Create sparkles animation
+      document.querySelectorAll('.sparkle').forEach(s => s.remove());
+      for (let i = 0; i < 15; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = Math.random() * window.innerWidth + 'px';
+        s.style.top = Math.random() * window.innerHeight + 'px';
+        s.style.background = '#fff';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 2000);
+      }
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.background = 'rgba(255,255,255,0.15)';
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `
+        <h3>Your Future Vibe: ${chosen.mood.toUpperCase()}</h3>
+        <p><strong>Core Message:</strong> ${chosen.quote}</p>
+        <p><strong>What This Means:</strong> ${chosen.long}</p>
+        <p><strong>Did You Know?</strong> ${chosen.fact}</p>
+        <p style="margin-top:10px;"><strong>${hero.name} says:</strong> “${hero.message}”</p>
+      `;
+    }
+  </script>
+</body>
+</html>
